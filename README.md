@@ -16,3 +16,4 @@
 
 
 ## Sources
+Seam Carving Paper: https://faculty.idc.ac.il/arik/SCWeb/imret/

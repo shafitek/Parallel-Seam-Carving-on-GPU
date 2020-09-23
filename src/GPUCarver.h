@@ -15,8 +15,8 @@ class GPUCarver: public SeamCarver {
 
     private:
         cv::Mat energy_map;
-        cv::Mat getEnergyMap();
-        cv::Mat getOptimalSeam();
+        void computeEnergyMap();
+        void computeOptimalSeam();
 };
 
 #endif // SHAFITEK_GPU_CARVER_H

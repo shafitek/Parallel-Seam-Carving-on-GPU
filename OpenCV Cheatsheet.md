@@ -55,7 +55,7 @@ ch3 = channels[2];
 
 ///////////////// MERGE ///////////////
 
-merge(channels, 3, img)
+merge(channels, img)
 ```
 
 Zeros, Ones, Diagonals:
@@ -124,6 +124,11 @@ cv::Point minLoc, maxLoc;
 minMaxLoc(A, &minA, &maxA, &minLoc, &maxLoc, OPTIONAL_MASK) // finds the minimum and maximum element values and their positions. ONLY works with single channel!
 ```
 
+Normalize matrix values between 0 and 255:
+```cpp
+cv::normalize(emap, emap, 255, 0, cv::NORM_MINMAX);
+```
+
 Matrix Comapre and Bitwise Operations, Matrix mask
 ```cpp
 Mat C = A >= SOME_NUM // Creates a mask matrix, 0 if false, 255 if true
@@ -139,6 +144,12 @@ Using masks:
 ```cpp
 A.setTo(SOME_VAL, mask); // set mask elements to some number
 A.copyTo(B, mask); // copy over elements of A to the corresponding elements of B specified by the mask.
+```
+
+Copy over row/col from one matrix to another:
+```cpp
+A.row(0).copyTo(B.row(0)); // works!
+B.row(0) = A.row(0) // Doesn't work!
 ```
 
 Matrix Concatenate:
@@ -178,4 +189,12 @@ Display an image:
 cv::namedWindow("Display A", cv::WINDOW_AUTOSIZE);
 cv::imshow("Display A", A);
 cv::waitKey(0);
+```
+
+Applying a 2D filter:
+```cpp
+cv::Mat x_out;
+cv::Mat x_filter = cv::Mat({-1, 1}).reshape(0, 1); // x derivative filter
+cv::filter2D(MY_IMG, A, CV_32F, x_filter);
+x_out.convertTo(x_out, CV_8U); // convert to unsigned char type before viewing the image since the image is single channel
 ```

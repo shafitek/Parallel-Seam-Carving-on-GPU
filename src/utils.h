@@ -11,5 +11,6 @@ bool istrEquals(std::string &, std::string &);
 int ifCPUGPUBoth(const char *);
 void viewBeforeAfter(cv::Mat &, cv::Mat &);
 void eraseTextFromTerminal(int);
+void printCVMatrix(cv::Mat);
 
 #endif // SHAFITEK_UTILS_H

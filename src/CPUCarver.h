@@ -14,9 +14,8 @@ class CPUCarver: public SeamCarver {
         CPUCarver(const char *, const bool &);
 
     private:
-        cv::Mat energy_map;
-        cv::Mat getEnergyMap();
-        cv::Mat getOptimalSeam();
+        void computeEnergyMap();
+        void computeOptimalSeam();
 };
 
 #endif // SHAFITEK_CPU_CARVER_H

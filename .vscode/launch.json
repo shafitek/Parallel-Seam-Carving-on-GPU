@@ -11,7 +11,7 @@
             "request": "launch",
             // "program": "${workspaceRoot}/build/${fileBasenameNoExtension}",
             "program": "${workspaceRoot}/bin/SeamCarving",
-            "args": ["${workspaceRoot}/images/lake.jpg", "Both", "0", "50"],
+            "args": ["${workspaceRoot}/images/lake.jpg", "CPU", "0", "100"],
             "preLaunchTask": "Build&Run",
             "stopAtEntry": false,
             "launchCompleteCommand": "exec-run",

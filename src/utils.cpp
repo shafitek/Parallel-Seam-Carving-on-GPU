@@ -38,3 +38,7 @@ void eraseTextFromTerminal(int count) {
     for(int i = 0; i < count; i++)
         std::cout << "\b" << std::flush;
 }
+
+void printCVMatrix(cv::Mat mat) {
+    std::cout << cv::format(mat, cv::Formatter::FMT_MATLAB) << std::endl;
+}
