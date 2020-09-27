@@ -19,26 +19,26 @@ class SeamCarver
         std::pair<int, int> getOrigDim() const;
         std::pair<int, int> getCarvedDim() const;
         cv::Mat getOrigImage() const;
-        cv::Mat getCPUCarvedImage() const;
-        cv::Mat getGPUCarvedImage() const;
-
-    protected:
+        cv::Mat getCarvedImage() const;
         cv::Mat energy_img;
         cv::Mat energy_map;
+
+    protected:
         cv::Mat getImage() const;
         const bool getIfReduce() const;
         void setOptimalSeam(std::vector<unsigned int> &);
         void setExecutionTime(double &);
 
     private:
-        cv::Mat orig_img;
-        cv::Mat cpu_img, gpu_img;
+        cv::Mat orig_img, gray_orig_image;
+        cv::Mat curr_img, gpu_img;
         std::vector<unsigned int> optimal_seam;
         bool reduce;
         double exec_time=0.0;
         std::pair<int,int> orig_dim, curr_dim;
+        virtual void computeEnergyImage() = 0;
         virtual void computeEnergyMap() = 0;
-        virtual void computeOptimalSeam() = 0;
+        void computeOptimalSeam();
 };
 
 #endif // SHAFITEK_SEAM_CARVER_H

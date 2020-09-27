@@ -8,15 +8,15 @@
 #include <opencv2/opencv.hpp>
 
 #include "SeamCarver.h"
+#include "EnergyKernels.cuh"
 
 class GPUCarver: public SeamCarver {
     public:
         GPUCarver(const char *, const bool &);
 
     private:
-        cv::Mat energy_map;
+        void computeEnergyImage();
         void computeEnergyMap();
-        void computeOptimalSeam();
 };
 
 #endif // SHAFITEK_GPU_CARVER_H

@@ -1,4 +1,6 @@
 {
+    // "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    // "C_Cpp.intelliSenseEngine": "Tag Parser",
     "files.associations": {
         "*.template": "cpp",
         "*.cu": "cpp",
@@ -64,5 +66,5 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "__nullptr": "cpp"
-    }
+    },
 }

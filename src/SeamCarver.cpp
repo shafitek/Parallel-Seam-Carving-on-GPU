@@ -2,8 +2,9 @@
 
 SeamCarver::SeamCarver(const char *img_path, const bool &reduce)
 {
-    this->cpu_img = cv::imread(img_path, cv::IMREAD_COLOR);
-    this->orig_img = this->cpu_img.clone();
+    this->curr_img = cv::imread(img_path, cv::IMREAD_COLOR);
+    this->orig_img = this->curr_img.clone();
+    cv::cvtColor(this->orig_img, this->gray_orig_image, cv::COLOR_BGR2GRAY);
     this->reduce = reduce;
 
     this->orig_dim = std::make_pair(this->orig_img.rows, this->orig_img.cols);
@@ -13,9 +14,11 @@ SeamCarver::SeamCarver(const char *img_path, const bool &reduce)
 void SeamCarver::carveImage(const unsigned int &resize_factor)
 {
     for(int m = 0; m < resize_factor; m++) {
-        cv::Mat img = this->cpu_img;
+        computeEnergyImage();
         computeEnergyMap();
         computeOptimalSeam();
+        
+        cv::Mat img = this->curr_img;
 
         cv::Mat n_b = cv::Mat::zeros(img.rows, img.cols - 1, CV_8U);
         cv::Mat n_g = cv::Mat::zeros(img.rows, img.cols - 1, CV_8U);
@@ -50,9 +53,73 @@ void SeamCarver::carveImage(const unsigned int &resize_factor)
         }
 
         cv::merge(new_img_channel, img);
-        this->cpu_img = img;
+        this->curr_img = img;
+        cv::cvtColor(this->curr_img, this->gray_orig_image, cv::COLOR_BGR2GRAY);
         this->curr_dim.second--;
     }
+}
+
+void SeamCarver::computeOptimalSeam()
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    cv::Mat &emap = this->energy_map;
+    int height = emap.rows;
+    int width = emap.cols;
+
+    cv::Mat last_row = emap.row(height - 1);
+    double min_v, max_v;
+    cv::Point min_of_col, max_of_col;
+
+    cv::minMaxLoc(last_row, &min_v, &max_v, &min_of_col, &max_of_col);
+
+    unsigned int left, middle, right, curr_col;
+    curr_col = min_of_col.x;
+    std::vector<unsigned int> curr_seam(height, 0);
+
+    for (int i = height - 2; i >= 0; i--)
+    {
+        left = curr_col - 1;
+        middle = curr_col;
+        right = curr_col + 1;
+        if (left < 0)
+        {
+            if (emap.at<double>(i, middle) > emap.at<double>(i, right))
+                curr_col = right;
+            else
+                curr_col = middle;
+
+            curr_seam[i] = curr_col;
+            continue;
+        }
+        if (right > width - 1)
+        {
+            if (emap.at<double>(i, left) > emap.at<double>(i, middle))
+                curr_col = middle;
+            else
+                curr_col = left;
+
+            curr_seam[i] = curr_col;
+            continue;
+        }
+        std::vector<double> v = {emap.at<double>(i, left),
+                                 emap.at<double>(i, middle),
+                                 emap.at<double>(i, right)};
+
+        int min_elem_idx = std::min_element(v.begin(), v.end()) - v.begin();
+        if (min_elem_idx == 0)
+            curr_col = left;
+        else if (min_elem_idx == 2)
+            curr_col = right;
+        else
+            curr_col = middle;
+
+        curr_seam[i] = curr_col;
+    }
+
+    setOptimalSeam(curr_seam);
+    auto end = std::chrono::high_resolution_clock::now();
+    double diff = (double)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    setExecutionTime(diff);
 }
 
 cv::Mat SeamCarver::getOrigImage() const
@@ -62,15 +129,11 @@ cv::Mat SeamCarver::getOrigImage() const
 
 cv::Mat SeamCarver::getImage() const
 {
-    return this->cpu_img;
+    return this->gray_orig_image;
 }
-cv::Mat SeamCarver::getCPUCarvedImage() const
+cv::Mat SeamCarver::getCarvedImage() const
 {
-    return this->cpu_img;
-}
-cv::Mat SeamCarver::getGPUCarvedImage() const
-{
-    return this->gpu_img;
+    return this->curr_img;
 }
 std::pair<int, int> SeamCarver::getOrigDim() const
 {

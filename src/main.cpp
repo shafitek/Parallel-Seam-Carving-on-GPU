@@ -61,9 +61,9 @@ int main(int argc, char const *argv[])
         cpu_time = seamCarver->getExecutionTime();
         std::cout << "CPU carving completed!" << std::endl;
         // extra space included after "ms" because the function does not fully clear the output
-        std::cout << "\nCPU Execution Time: " << cpu_time << " ms" << std::endl;
+        std::cout << "\nCPU Execution Time: " << cpu_time << " ms" << std::endl << std::endl;
         cv::namedWindow("CPU", cv::WINDOW_AUTOSIZE);
-        cv::imshow("CPU", seamCarver->getCPUCarvedImage());
+        cv::imshow("CPU", seamCarver->getCarvedImage());
     }
 
     if (run_type_i == 1 || run_type_i == 2) // GPU
@@ -72,8 +72,9 @@ int main(int argc, char const *argv[])
         std::cout << "Carving via the GPU. Please wait..." << std::flush;
         seamCarver->carveImage(resize_factor);
         gpu_time = seamCarver->getExecutionTime();
-        eraseTextFromTerminal(35);
-        std::cout << "GPU Execution Time: " << gpu_time << " ms        " << std::endl;
+        std::cout << "GPU carving completed!" << std::endl;
+        std::cout << "GPU Execution Time: " << gpu_time << " ms" << std::endl;
+        cv::imshow("GPU", seamCarver->getCarvedImage());
     }
 
     std::cout << "\nFinished!" << std::endl;
@@ -86,3 +87,4 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+
